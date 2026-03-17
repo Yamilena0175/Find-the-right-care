@@ -1,25 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home</title>
-  <style>
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      background-color: white;
-      font-family: Arial, sans-serif;
-    }
-    h1 {
-      color: black;
-    }
-  </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MedPath AI</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-<h1>Hey</h1>
+  <div class="app-shell">
+    <header class="top-nav">
+      <div class="brand-block">
+        <h1>MedPath AI</h1>
+        <p>Agentic Healthcare Intake Demo</p>
+      </div>
+
+      <nav class="nav-tabs">
+        <button class="tab-btn active" data-view="patientView">Patient View</button>
+        <button class="tab-btn" data-view="providerView">Provider Dashboard</button>
+        <button class="tab-btn" data-view="overviewView">System Overview</button>
+      </nav>
+    </header>
+
+    <!-- PATIENT VIEW -->
+    <section id="patientView" class="view active">
+      <div class="patient-layout">
+        <main class="patient-main card">
+          <div class="section-header">
+            <div>
+              <h2>Patient Intake Chat</h2>
+              <p>Describe symptoms, history, allergies, and concerns</p>
+            </div>
+          </div>
+
+          <div id="chatBox" class="chat-box"></div>
+
+          <div class="intake-form-grid">
+            <div class="field">
+              <label>Patient Name</label>
+              <input id="patientName" type="text" value="JEANNETTE" />
+            </div>
+
+            <div class="field">
+              <label>Age</label>
+              <input id="patientAge" type="number" value="22" />
+            </div>
+
+            <div class="field">
+              <label>Medical History</label>
+              <input id="patientHistory" type="text" value="Asthma" />
+            </div>
+
+            <div class="field">
+              <label>Medications / Allergies</label>
+              <input id="patientMeds" type="text" value="Inhaler and peanut allergy" />
+            </div>
+          </div>
+
+          <div class="field full-width">
+            <label>What symptoms or concerns would you like to report?</label>
+            <textarea
+              id="messageInput"
+              rows="4"
+              placeholder="Example: I have had a headache for 3 days, nausea since yesterday, and today I feel dizzy."
+            ></textarea>
+          </div>
+
+          <div class="button-row">
+            <button id="sendBtn" class="primary-btn">Submit to Chat</button>
+            <button id="followUpBtn" class="secondary-btn">Simulate 24h Follow-Up</button>
+            <button id="clearBtn" class="ghost-btn">Clear</button>
+          </div>
+        </main>
+
+        <aside class="patient-side">
+          <div class="card side-card">
+            <h3>Live Risk Signal</h3>
+            <div id="riskBadge" class="risk-pill low">LOW RISK</div>
+            <p id="riskReasonText">Symptoms appear appropriate for routine intake at this time.</p>
+          </div>
+
+          <div class="card side-card">
+            <h3>Stored Patient Memory</h3>
+            <div id="profileBox">No patient data yet.</div>
+          </div>
+
+          <div class="card side-card">
+            <h3>Provider Routing</h3>
+            <div id="routingBox">Primary care or telehealth</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- PROVIDER VIEW -->
+    <section id="providerView" class="view">
+      <div class="provider-top-cards">
+        <div class="metric-card card">
+          <span class="metric-label">Active Patients</span>
+          <span class="metric-value" id="metricPatients">6</span>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">High Risk</span>
+          <span class="metric-value" id="metricHighRisk">1</span>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Follow-Ups Due</span>
+          <span class="metric-value" id="metricFollowups">2</span>
+        </div>
+        <div class="metric-card card">
+          <span class="metric-label">Pending Review</span>
+          <span class="metric-value" id="metricPending">3</span>
+        </div>
+      </div>
+
+      <div class="provider-layout">
+        <aside class="card queue-panel">
+          <div class="section-header">
+            <div>
+              <h2>Patient Queue</h2>
+              <p>Tap a patient to view details</p>
+            </div>
+          </div>
+          <div id="patientQueue" class="patient-queue"></div>
+        </aside>
+
+        <main class="provider-center">
+          <div class="card summary-card">
+            <div class="section-header">
+              <div>
+                <h2>Patient Summary</h2>
+                <p>Provider-facing summary generated by agents</p>
+              </div>
+            </div>
+            <pre id="summaryBox">No summary yet.</pre>
+          </div>
+
+          <div class="card timeline-card">
+            <div class="section-header">
+              <div>
+                <h2>Symptom Timeline</h2>
+                <p>Stored concerns and progression over time</p>
+              </div>
+            </div>
+            <div id="timelineBox" class="timeline-list"></div>
+          </div>
+        </main>
+
+        <aside class="provider-right">
+          <div class="card action-card">
+            <h3>Selected Patient</h3>
+            <div id="selectedPatientCard">Select a patient from the queue.</div>
+          </div>
+
+          <div class="card action-card">
+            <h3>AI Agent Notes</h3>
+            <div id="ibmBox">Waiting for AI updates...</div>
+          </div>
+
+          <div class="card action-card">
+            <h3>Actions</h3>
+            <div class="action-buttons">
+              <button class="primary-btn small-btn">Mark Reviewed</button>
+              <button class="secondary-btn small-btn">Assign Nurse</button>
+              <button class="secondary-btn small-btn">Recommend Telehealth</button>
+              <button class="ghost-btn small-btn">Schedule Follow-Up</button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- OVERVIEW VIEW -->
+    <section id="overviewView" class="view">
+      <div class="overview-grid">
+        <div class="card">
+          <h2>Background Agents</h2>
+          <div class="overview-agent-grid">
+            <div class="mini-agent-card">
+              <span class="agent-tag">Agent 1</span>
+              <h3>Medical History Builder</h3>
+              <p>Builds patient memory from chat and prior concerns.</p>
+            </div>
+            <div class="mini-agent-card">
+              <span class="agent-tag">Agent 2</span>
+              <h3>Symptom Pattern Monitor</h3>
+              <p>Looks for trends and repeated symptoms over time.</p>
+            </div>
+            <div class="mini-agent-card">
+              <span class="agent-tag">Agent 3</span>
+              <h3>Urgency Detection</h3>
+              <p>Flags concerning combinations and suggests escalation.</p>
+            </div>
+            <div class="mini-agent-card">
+              <span class="agent-tag">Agent 4</span>
+              <h3>Follow-Up Agent</h3>
+              <p>Schedules or simulates check-ins after the initial intake.</p>
+            </div>
+            <div class="mini-agent-card">
+              <span class="agent-tag">Agent 5</span>
+              <h3>Doctor Summary Agent</h3>
+              <p>Creates provider-facing notes and suggested routing.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>How the System Works</h2>
+          <ol class="flow-list">
+            <li>Patient submits symptoms in chat</li>
+            <li>Intake agent stores structured patient context</li>
+            <li>Risk agent evaluates severity</li>
+            <li>Summary agent prepares provider note</li>
+            <li>Provider dashboard updates with new patient status</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
 </body>
 </html>
